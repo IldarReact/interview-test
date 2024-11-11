@@ -1,14 +1,13 @@
 import React from 'react';
-import { Container, Grid, Typography, Button } from '@mui/material';
+import { Container, Box, Stack, Typography, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 import YouTubeEmbed from '../../components/YouTubeEmbed/YouTubeEmbed';
-import { StyledLink, StyledButton } from './styles';
 
 const Home = () => {
   return (
     <Container maxWidth="lg" sx={{ flexGrow: 1, py: 8 }}>
-      <Grid container spacing={4}>
-        <Grid item xs={12} md={6}>
+      <Stack direction={{ xs: 'column', md: 'row' }} spacing={4}>
+        <Box flex={1}>
           <Typography variant="h2" gutterBottom>
             Welcome to My App
           </Typography>
@@ -24,11 +23,12 @@ const Home = () => {
           >
             Contact Us
           </Button>
-        </Grid>
-        <Grid item xs={12} md={6}>
+        </Box>
+        <Box flex={1}>
+          {/* <YouTubeEmbed videoId="VIDEO_ID_HERE" /> */}
           <YouTubeEmbed videoId="dQw4w9WgXcQ" />
-        </Grid>
-      </Grid>
+        </Box>
+      </Stack>
     </Container>
   );
 };

@@ -1,23 +1,27 @@
 import React from 'react';
-import YouTube, { YouTubeProps } from 'react-youtube';
 import { StyledWrapper } from './styles';
 
-interface YouTubeEmbedProps extends YouTubeProps {
+interface YouTubeEmbedProps {
   videoId: string;
+  width?: number;
+  height?: number;
 }
 
-const YouTubeEmbed: React.FC<YouTubeEmbedProps> = ({ videoId, ...props }) => {
-  const opts: YouTubeProps['opts'] = {
-    height: '390',
-    width: '640',
-    playerVars: {
-      autoplay: 0,
-    },
-  };
-
+const YouTubeEmbed: React.FC<YouTubeEmbedProps> = ({
+  videoId,
+  width = 640,
+  height = 360,
+}) => {
   return (
     <StyledWrapper>
-      <YouTube videoId={videoId} opts={opts} {...props} />
+      <iframe
+        width={width}
+        height={height}
+        src={`https://www.youtube.com/embed/${videoId}`}
+        frameBorder="0"
+        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      ></iframe>
     </StyledWrapper>
   );
 };
