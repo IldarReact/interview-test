@@ -1,0 +1,26 @@
+{
+    "version": "0.2",
+    "language": "en",
+    // Words that will not be considered errors
+    "words": [
+      "tsbuildinfo",
+      "vite",
+      "tsconfig",
+      "ESNext"
+    ],
+    // Folders to ignore during the check
+    "ignorePaths": [
+      "node_modules/**",
+      "dist/**",
+      "build/**",
+      ".git/**"
+    ],
+    "allowCompoundWords": true,
+    // Dictionaries for specialized terms
+    "dictionaries": [
+      "typescript",
+      "node",
+      "npm"
+    ]
+  }
+  

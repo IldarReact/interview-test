@@ -1,20 +1,24 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import { createRoot } from 'react-dom/client';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import theme from './styles/theme';
 import { GlobalStyles } from './styles/GlobalStyles';
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <BrowserRouter>
+const rootElement = document.getElementById('root');
+
+if (rootElement) {
+  const root = createRoot(rootElement);
+  root.render(
+    <React.StrictMode>
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <GlobalStyles />
         <App />
       </ThemeProvider>
-    </BrowserRouter>
-  </React.StrictMode>
-);
+    </React.StrictMode>
+  );
+} else {
+  console.error("Root element with id 'root' not found.");
+}

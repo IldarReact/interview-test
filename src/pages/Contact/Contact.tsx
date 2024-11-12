@@ -1,5 +1,4 @@
-import React from 'react';
-import { Container, Grid, Typography, TextField, Button } from '@mui/material';
+import { Container, Grid2, Typography } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { StyledForm, StyledInput, StyledButton } from './styles';
 
@@ -32,17 +31,17 @@ const Contact = () => {
 
   return (
     <Container maxWidth="lg" sx={{ flexGrow: 1, py: 8 }}>
-      <Grid container spacing={4}>
-        <Grid item xs={12} md={6}>
+      <Grid2 container spacing={4}>
+        <Grid2 xs={12} md={6}>
           <Typography variant="h2" gutterBottom>
             Contact Us
           </Typography>
           <Typography variant="body1" paragraph>
             Fill out the form below to get in touch with us.
           </Typography>
-        </Grid>
-        <Grid item xs={12} md={6}>
-          {/* Подумать о замене на StyledForm onSubmit={handleSubmit(onSubmit)} netlify > */}
+        </Grid2>
+        
+        <Grid2 xs={12} md={6}>
           <StyledForm onSubmit={handleSubmit(onSubmit)}>
             <StyledInput
               {...register('name', { required: 'Name is required' })}
@@ -77,8 +76,8 @@ const Contact = () => {
               Submit
             </StyledButton>
           </StyledForm>
-        </Grid>
-      </Grid>
+        </Grid2>
+      </Grid2>
     </Container>
   );
 };
