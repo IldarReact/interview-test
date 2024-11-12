@@ -42,6 +42,7 @@ const Contact = () => {
           </Typography>
         </Grid>
         <Grid item xs={12} md={6}>
+          {/* Подумать о замене на StyledForm onSubmit={handleSubmit(onSubmit)} netlify > */}
           <StyledForm onSubmit={handleSubmit(onSubmit)}>
             <StyledInput
               {...register('name', { required: 'Name is required' })}
