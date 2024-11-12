@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import YouTubeEmbed from './YouTubeEmbed';
 import '@testing-library/jest-dom';

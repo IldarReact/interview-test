@@ -32,7 +32,7 @@ const Contact = () => {
   return (
     <Container maxWidth="lg" sx={{ flexGrow: 1, py: 8 }}>
       <Grid2 container spacing={4}>
-        <Grid2 xs={12} md={6}>
+        <Grid2 container spacing={4}>
           <Typography variant="h2" gutterBottom>
             Contact Us
           </Typography>
@@ -41,7 +41,7 @@ const Contact = () => {
           </Typography>
         </Grid2>
         
-        <Grid2 xs={12} md={6}>
+        <Grid2 container spacing={4}>
           <StyledForm onSubmit={handleSubmit(onSubmit)}>
             <StyledInput
               {...register('name', { required: 'Name is required' })}
