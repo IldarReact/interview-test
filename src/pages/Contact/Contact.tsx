@@ -1,6 +1,7 @@
 import { Container, Grid2, Typography } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { StyledForm, StyledInput, StyledButton } from './styles';
+import { useHistory } from 'react-router-dom';
 
 interface FormValues {
   name: string;
@@ -10,19 +11,19 @@ interface FormValues {
 
 const Contact = () => {
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
+  const history = useHistory();
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     try {
-      const response = await fetch('/.netlify/functions/submit-form', {
+      await fetch('/.netlify/functions/submit-form', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
       });
-
-      const responseData = await response.json();
-      alert(responseData.message);
+  
+      history.push(`/thank-you/${data.name}`);
     } catch (error) {
       console.error('Error submitting form:', error);
       alert('There was an error submitting the form. Please try again later.');
@@ -40,7 +41,7 @@ const Contact = () => {
             Fill out the form below to get in touch with us.
           </Typography>
         </Grid2>
-        
+
         <Grid2 container spacing={4}>
           <StyledForm onSubmit={handleSubmit(onSubmit)}>
             <StyledInput

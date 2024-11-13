@@ -1,81 +1,87 @@
-import React from 'react';
-import ReactPlayer from 'react-player';
+import React, { useState, useEffect } from 'react';
 
-// Type definitions for YouTube player errors
-export type YouTubePlayerError = {
-  data: number; // Error code from the player
-  target: {
-    playerInfo?: {
-      code: number; // Internal player error code
-      videoId: string; // ID of the video that caused the error
-    };
+const YouTubeEmbed = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+  const videoId = 'dQw4w9WgXcQ';
+
+  const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?` +
+    new URLSearchParams({
+      autoplay: '0',
+      rel: '0',
+      modestbranding: '1',
+      iv_load_policy: '3',
+      origin: window.location.origin,
+    }).toString();
+
+  const handleIframeError = (event: React.SyntheticEvent<HTMLIFrameElement, Event>) => {
+    const iframe = event.target as HTMLIFrameElement;
+    const iframeError = iframe.contentWindow?.document?.body?.textContent;
+
+    if (iframeError?.includes('Access to resources at origin')) {
+      setIsLoading(false);
+      setHasError(true);
+    }
   };
-};
 
-// Type for the progress state of the video
-export type ProgressState = {
-  played: number; // Playback progress (0-1)
-  playedSeconds: number; // Time played in seconds
-  loaded: number; // Loading progress (0-1)
-  loadedSeconds: number; // Time loaded in seconds
-};
+  useEffect(() => {
+    const iframe = document.querySelector('iframe');
+    if (iframe) {
+      iframe.addEventListener('error', (event) => handleIframeError(event as unknown as React.SyntheticEvent<HTMLIFrameElement, Event>));
+    }
 
-// Props interface for the component
-interface YouTubeEmbedProps {
-  videoId: string; // YouTube video identifier
-  width?: string | number; // Player width
-  height?: string | number; // Player height
-  onReady?: () => void; // Callback when player is ready
-  onError?: (error: YouTubePlayerError) => void; // Error handler
-  onProgress?: (state: ProgressState) => void; // Progress update handler
-}
+    return () => {
+      if (iframe) {
+        iframe.removeEventListener('error', (event) => handleIframeError(event as unknown as React.SyntheticEvent<HTMLIFrameElement, Event>));
+      }
+    };
+  }, []);
 
-const YouTubeEmbed: React.FC<YouTubeEmbedProps> = ({
-  videoId,
-  width = '100%',
-  height = '100%',
-  onReady,
-  onError,
-  onProgress,
-}) => {
-  // Reference to access player methods
-  const playerRef = React.useRef<ReactPlayer>(null);
+  const handleIframeLoad = () => {
+    setIsLoading(false);
+    setHasError(false);
+  };
 
   return (
-    <div style={{ 
-      aspectRatio: '16/9', 
-      width: '100%',
-      position: 'relative',
-      backgroundColor: '#000' // Dark background for loading state
-    }}>
-      <ReactPlayer
-        ref={playerRef}
-        url={`https://www.youtube.com/watch?v=${videoId}`}
-        width={width}
-        height={height}
-        controls={true}
-        config={{
-          youtube: {
-            playerVars: { 
-              origin: window.location.origin,
-              /* cspell:disable */
-              enablejsapi: 1, // Enable YouTube iframe API
-              modestbranding: 1, // Use minimal YouTube branding
-              rel: 0, // Disable related videos at the end
-              showinfo: 0 // Hide video title and uploader info
-              /* cspell:enable */
-            }
-          }
-        }}
-        style={{ margin: '0 auto' }}
-        light={true} // Use light mode for better initial loading
-        playing={false} // Start in paused state
-        pip={true} // Enable picture-in-picture mode
-        stopOnUnmount={true} // Clean up on component unmount
-        onReady={onReady}
-        onError={onError}
-        onProgress={onProgress}
-      />
+    <div className="w-full max-w-3xl mx-auto">
+      <div className="relative bg-gray-100 rounded-lg overflow-hidden">
+        {isLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+            <div className="text-gray-600">Loading video...</div>
+          </div>
+        )}
+
+        <div className="relative pt-[56.25%]">
+          <iframe
+            className="absolute top-0 left-0 w-full h-full"
+            src={embedUrl}
+            title="YouTube video player"
+            frameBorder="0"
+            loading="lazy"
+            onLoad={handleIframeLoad}
+            onError={(event) => handleIframeError(event as unknown as React.SyntheticEvent<HTMLIFrameElement, Event>)}
+            allowFullScreen
+          />
+        </div>
+
+        {hasError && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+            <div className="text-center p-4">
+              <p className="text-gray-700 mb-2">
+                Unable to load the video player due to CORS restrictions.
+              </p>
+              <a
+                href={`https://www.youtube.com/watch?v=${videoId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:text-blue-800 underline"
+              >
+                Watch on YouTube
+              </a>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

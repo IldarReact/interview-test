@@ -1,19 +1,7 @@
 import { Container, Box, Stack, Typography, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
-import YouTubeEmbed, { YouTubePlayerError, ProgressState } from '../../components/YouTubeEmbed/YouTubeEmbed';
+import YouTubeEmbed from '../../components/YouTubeEmbed/YouTubeEmbed';
 const Home = () => {
-  // Event handlers with correct types
-  const handlePlayerReady = (): void => {
-    console.log('Player is ready');
-  };
-
-  const handlePlayerError = (error: YouTubePlayerError): void => {
-    console.error('Player error:', error.data);
-  };
-
-  const handlePlayerProgress = (state: ProgressState): void => {
-    console.log('Progress:', state.played);
-  };
 
   return (
     <Container maxWidth="lg" sx={{ flexGrow: 1, py: 8 }}>
@@ -48,12 +36,7 @@ const Home = () => {
           }}
         >
           {/* YouTubeEmbed */}
-          <YouTubeEmbed
-            videoId="dQw4w9WgXcQ"
-            onReady={handlePlayerReady}
-            onError={handlePlayerError}
-            onProgress={handlePlayerProgress}
-          />
+          <YouTubeEmbed />
 
         </Box>
       </Stack>
