@@ -44,7 +44,7 @@ const YouTubeEmbed: React.FC<YouTubeEmbedProps> = ({
   return (
     <div style={{ 
       aspectRatio: '16/9', 
-      maxWidth: '100%',
+      width: '100%',
       position: 'relative',
       backgroundColor: '#000' // Dark background for loading state
     }}>

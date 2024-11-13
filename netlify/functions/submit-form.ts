@@ -22,6 +22,7 @@ const handler: Handler = async (event) => {
       statusCode: 200,
       body: JSON.stringify({ message: `Thank you, ${formData.name}!` }),
     };
+    
   } catch (error) {
     console.error('Error handling form submission:', error);
     return {

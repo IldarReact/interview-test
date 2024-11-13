@@ -1,7 +1,6 @@
 import { Container, Box, Stack, Typography, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 import YouTubeEmbed, { YouTubePlayerError, ProgressState } from '../../components/YouTubeEmbed/YouTubeEmbed';
-
 const Home = () => {
   // Event handlers with correct types
   const handlePlayerReady = (): void => {
@@ -48,13 +47,14 @@ const Home = () => {
             alignItems: 'center'
           }}
         >
-          <div></div>
+          {/* YouTubeEmbed */}
           <YouTubeEmbed
             videoId="dQw4w9WgXcQ"
             onReady={handlePlayerReady}
             onError={handlePlayerError}
             onProgress={handlePlayerProgress}
           />
+
         </Box>
       </Stack>
     </Container>
