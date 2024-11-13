@@ -22,7 +22,6 @@ const Contact = () => {
         },
         body: JSON.stringify(data),
       });
-  
       history.push(`/thank-you/${data.name}`);
     } catch (error) {
       console.error('Error submitting form:', error);

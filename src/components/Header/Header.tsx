@@ -1,5 +1,6 @@
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
+import { StyledLink } from './styles';
 
 const Header = () => {
   return (
@@ -9,7 +10,7 @@ const Header = () => {
           My App
         </Typography>
         <Box>
-          <Button color="inherit" component={Link} to="/contact">
+          <Button color="inherit" component={StyledLink} to="/contact">
             Contact
           </Button>
         </Box>
