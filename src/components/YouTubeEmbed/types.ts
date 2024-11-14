@@ -6,7 +6,7 @@ export interface YouTubeEmbedConfig {
     origin: string;
 }
 
-// Константы для улучшения типобезопасности
+// Constants for improved type safety
 export const DEFAULT_PLAYER_CONFIG: YouTubeEmbedConfig = {
     autoplay: '0',
     rel: '0',
@@ -15,7 +15,7 @@ export const DEFAULT_PLAYER_CONFIG: YouTubeEmbedConfig = {
     origin: typeof window !== 'undefined' ? window.location.origin : '',
 } as const;
 
-// Дополнительные типы для строгой типизации
+// Additional types for strict typing
 export type YouTubePlayerMode = 'normal' | 'privacy';
 export type YouTubeQuality = 'default' | 'small' | 'medium' | 'large' | 'hd720' | 'hd1080';
 

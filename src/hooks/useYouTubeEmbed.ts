@@ -9,11 +9,11 @@ interface UseYouTubePlayerResult {
 }
 
 const createYouTubeUrl = (videoId: string, config: YouTubeEmbedConfig): string => {
-  // Правильное приведение типов для URLSearchParams
+  // Proper type casting for URLSearchParams
   const params = new URLSearchParams(Object.entries(config)
     .reduce((acc, [key, value]) => ({
       ...acc,
-      [key]: String(value) // Явное приведение всех значений к строке
+      [key]: String(value) // Explicit conversion of all values to string
     }), {} as Record<string, string>));
     
   return `https://www.youtube-nocookie.com/embed/${videoId}?${params.toString()}`;
@@ -25,13 +25,13 @@ export const useYouTubePlayer = (
 ): UseYouTubePlayerResult => {
   const [hasError, setHasError] = useState(false);
 
-  // Мемоизируем конфигурацию
+  // Memoize configuration
   const config = useMemo(
     () => ({ ...DEFAULT_PLAYER_CONFIG, ...customConfig }),
     [customConfig]
   );
 
-  // Мемоизируем URL
+  // Memoize URL
   const embedUrl = useMemo(
     () => createYouTubeUrl(videoId, config),
     [videoId, config]
