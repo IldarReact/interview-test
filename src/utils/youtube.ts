@@ -1,6 +1,6 @@
 import { DEFAULT_PLAYER_CONFIG } from '../components/Home/Form/YouTubeEmbed/types';
 
-// Использование конфигурации плеера YouTube
+// Using YouTube player configuration
 export const getYouTubeEmbedUrl = (videoId: string, config = DEFAULT_PLAYER_CONFIG) => {
   const baseEmbedUrl = 'https://www.youtube.com/embed/';
   const params = new URLSearchParams({

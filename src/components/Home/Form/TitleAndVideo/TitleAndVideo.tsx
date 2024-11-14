@@ -9,11 +9,11 @@ const TitleAndVideo = () => {
     <Stack
       direction={{ xs: 'column', md: 'row' }}
       alignItems="center"
-      justifyContent="space-between"  // Distribute space between the two Box components
+      justifyContent="space-between"
       sx={{
-        mb: { xs: 3, md: 6 },  // Margin-bottom for spacing below the Stack
+        mb: { xs: 3, md: 6 },
         textAlign: { xs: 'center', md: 'left' },
-        gap: { xs: 3, md: 10 }  // Optional: Adds additional gap between the elements
+        gap: { xs: 3, md: 10 }
       }}
     >
       <Box flex={1} sx={{ maxWidth: { xs: '100%', md: '400px' }, px: { xs: 2, md: 0 } }}>

@@ -1,5 +1,3 @@
-// types.ts
-
 export interface YouTubeEmbedConfig {
     autoplay: string | '0' | '1';
     rel: string | '0' | '1';
@@ -8,7 +6,7 @@ export interface YouTubeEmbedConfig {
     origin: string;
 }
 
-// Обновленная конфигурация по умолчанию
+// Updated default configuration
 export const DEFAULT_PLAYER_CONFIG: YouTubeEmbedConfig = {
     autoplay: '0',
     rel: '0',
@@ -17,7 +15,7 @@ export const DEFAULT_PLAYER_CONFIG: YouTubeEmbedConfig = {
     origin: typeof window !== 'undefined' ? window.location.origin : '',
 } as const;
 
-// Дополнительные типы для строгой типизации
+// Additional types for strong typing
 export type YouTubePlayerMode = 'normal' | 'privacy';
 export type YouTubeQuality = 'default' | 'small' | 'medium' | 'large' | 'hd720' | 'hd1080';
 

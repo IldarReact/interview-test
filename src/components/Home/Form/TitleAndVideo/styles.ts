@@ -2,7 +2,7 @@ import { styled, Typography } from '@mui/material';
 
 export const StyledTitle = styled(Typography)(({ theme }) => ({
     fontWeight: 'bold',
-    fontSize: '2rem', // Базовый размер для мобильных
+    fontSize: '2rem',
     lineHeight: 1.2,
     [theme.breakpoints.up('md')]: {
         fontSize: '3rem',
