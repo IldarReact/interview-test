@@ -1,7 +1,7 @@
-import React from 'react';
 import { Container, Grid, Typography } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { StyledForm, StyledInput, StyledButton } from './styles'; // Import styles from styles.ts
+import { StyledForm, StyledInput, StyledButton } from './styles';
+import { useHistory } from 'react-router-dom';
 
 interface FormValues {
   name: string;
@@ -11,8 +11,7 @@ interface FormValues {
 
 const Contact = () => {
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
-  const [submitted, setSubmitted] = React.useState(false);  // Track form submission
-  const [name, setName] = React.useState('');  // Store the name for the thank you message
+  const history = useHistory();
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     try {
@@ -23,30 +22,12 @@ const Contact = () => {
         },
         body: JSON.stringify(data),
       });
-      setName(data.name);  // Set the name for the thank you message
-      setSubmitted(true);  // Mark the form as submitted
+      history.push(`/thank-you/${data.name}`);
     } catch (error) {
       console.error('Error submitting form:', error);
       alert('There was an error submitting the form. Please try again later.');
     }
   };
-
-  if (submitted) {
-    return (
-      <Container maxWidth="lg" sx={{ flexGrow: 1, py: 8 }}>
-        <Grid container spacing={4} justifyContent="center" alignItems="center">
-          <Grid item xs={12} sm={10} md={8}>
-            <Typography variant="h2" gutterBottom>
-              Thank You, {name}!
-            </Typography>
-            <Typography variant="body1" paragraph>
-              We appreciate your interest in our services. We will be in touch with you soon.
-            </Typography>
-          </Grid>
-        </Grid>
-      </Container>
-    );
-  }
 
   return (
     <Container maxWidth="lg" sx={{ flexGrow: 1, py: 8 }}>
