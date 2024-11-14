@@ -86,7 +86,7 @@ const YouTubeEmbed: React.FC<YouTubePlayerProps> = ({
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Смотреть на YouTube
+                Watch on YouTube
               </ErrorLink>
             </div>
           </ErrorContainer>
