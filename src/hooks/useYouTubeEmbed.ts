@@ -1,7 +1,6 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { YouTubeEmbedConfig, DEFAULT_PLAYER_CONFIG } from '../components/YouTubeEmbed/types';
 
-// Типизация возвращаемого значения
 interface UseYouTubePlayerResult {
   hasError: boolean;
   embedUrl: string;
@@ -9,47 +8,48 @@ interface UseYouTubePlayerResult {
   handleIframeLoad: () => void;
 }
 
-export const useYouTubePlayer = (videoId: string, customConfig?: YouTubeEmbedConfig): UseYouTubePlayerResult => {
+const createYouTubeUrl = (videoId: string, config: YouTubeEmbedConfig): string => {
+  // Правильное приведение типов для URLSearchParams
+  const params = new URLSearchParams(Object.entries(config)
+    .reduce((acc, [key, value]) => ({
+      ...acc,
+      [key]: String(value) // Явное приведение всех значений к строке
+    }), {} as Record<string, string>));
+    
+  return `https://www.youtube-nocookie.com/embed/${videoId}?${params.toString()}`;
+};
+
+export const useYouTubePlayer = (
+  videoId: string, 
+  customConfig?: Partial<YouTubeEmbedConfig>
+): UseYouTubePlayerResult => {
   const [hasError, setHasError] = useState(false);
 
-  // Использование пользовательской конфигурации, если она есть, или конфигурации по умолчанию
-  const config = useMemo(() => ({ ...DEFAULT_PLAYER_CONFIG, ...customConfig }), [customConfig]);
+  // Мемоизируем конфигурацию
+  const config = useMemo(
+    () => ({ ...DEFAULT_PLAYER_CONFIG, ...customConfig }),
+    [customConfig]
+  );
 
-  // Создание URL для встраивания YouTube с параметрами
-  const embedUrl = useMemo(() => 
-    `https://www.youtube-nocookie.com/embed/${videoId}?${new URLSearchParams(config as Record<string, string>).toString()}`,
+  // Мемоизируем URL
+  const embedUrl = useMemo(
+    () => createYouTubeUrl(videoId, config),
     [videoId, config]
   );
 
-  // Обработчик ошибок iframe
   const handleIframeError = useCallback(
     (event: React.SyntheticEvent<HTMLIFrameElement, Event>) => {
       const iframe = event.target as HTMLIFrameElement;
-      const iframeError = iframe.contentWindow?.document?.body?.textContent;
-
-      if (iframeError?.includes('Access to resources at origin')) {
+      if (iframe.contentWindow?.document?.body?.textContent?.includes('Access to resources at origin')) {
         setHasError(true);
       }
     },
     []
   );
 
-  // Обработчик загрузки iframe
   const handleIframeLoad = useCallback(() => {
     setHasError(false);
   }, []);
-
-  // Добавление слушателей событий для iframe (ошибка и загрузка)
-  useEffect(() => {
-    const iframe = document.querySelector('iframe');
-    if (!iframe) return;
-
-    const errorHandler = (event: Event) =>
-      handleIframeError(event as unknown as React.SyntheticEvent<HTMLIFrameElement, Event>);
-
-    iframe.addEventListener('error', errorHandler);
-    return () => iframe.removeEventListener('error', errorHandler);
-  }, [handleIframeError]);
 
   return {
     hasError,

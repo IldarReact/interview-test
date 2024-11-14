@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 import { YouTubePlayerProps } from './types';
 import {
   PlayerContainer,
@@ -10,90 +10,104 @@ import {
   ErrorLink,
 } from './styles';
 
-const YouTubeEmbed: React.FC<YouTubePlayerProps> = ({ 
+// Вынесем создание URL в отдельную функцию для мемоизации
+const createEmbedUrl = (videoId: string, autoplay: boolean, showControls: boolean): string => {
+  const baseUrl = 'https://www.youtube-nocookie.com/embed/';
+  const params = new URLSearchParams({
+    autoplay: autoplay ? '1' : '0',
+    controls: showControls ? '1' : '0',
+    rel: '0',
+    modestbranding: '1',
+    origin: window.location.origin,
+    loading: 'lazy',
+  });
+  return `${baseUrl}${videoId}?${params.toString()}`;
+};
+
+const YouTubeEmbed: React.FC<YouTubePlayerProps> = memo(({ 
   videoId,
   autoplay = false,
   showControls = true,
 }) => {
-  const [isIframeLoaded, setIframeLoaded] = useState(false);
+  // Мемоизируем URL для предотвращения лишних перерендеров
+  const embedUrl = useMemo(() => 
+    createEmbedUrl(videoId, autoplay, showControls),
+    [videoId, autoplay, showControls]
+  );
 
-  const baseEmbedUrl = 'https://www.youtube.com/embed/';
-  
-  // Формируем параметры для встраивания YouTube
-  const params = new URLSearchParams({
-    autoplay: autoplay ? '1' : '0',
-    controls: showControls ? '1' : '0',
-    rel: '0', // скрыть связанные видео
-    modestbranding: '1', // минимизировать брендинг YouTube
-    origin: window.location.origin,
-  });
-
-  const fullEmbedUrl = `${baseEmbedUrl}${videoId}?${params.toString()}`;
-
-  const handleError = (error: React.SyntheticEvent<HTMLIFrameElement, Event>) => {
-    console.error('Ошибка плеера YouTube:', error);
-  };
-
-  const handleLoad = () => {
-    setIframeLoaded(true);
-    console.log('Плеер YouTube загружен успешно');
-  };
-
-  useEffect(() => {
-    // Запуск только когда компонент в зоне видимости
-    const handleIntersection = (entries: IntersectionObserverEntry[]) => {
-      const entry = entries[0];
-      if (entry.isIntersecting) {
-        setIframeLoaded(true); // Загружаем iframe, когда элемент виден
-      }
-    };
-
-    const observer = new IntersectionObserver(handleIntersection, { threshold: 0.5 });
-    const iframeContainer = document.getElementById('youtube-iframe-container');
-
-    if (iframeContainer) {
-      observer.observe(iframeContainer);
-    }
-
-    return () => observer.disconnect();
+  // Используем useCallback для обработчиков событий
+  const handleError = useCallback((error: React.SyntheticEvent<HTMLIFrameElement>) => {
+    console.error('YouTube player error:', error);
   }, []);
+
+  // Используем IntersectionObserver через хук
+  const videoRef = useIntersectionObserver<HTMLDivElement>((isVisible) => {
+    if (isVisible) {
+      // Можно добавить дополнительную логику при появлении в поле зрения
+      console.log('Video container is visible');
+    }
+  });
 
   return (
     <PlayerContainer>
       <PlayerWrapper>
-        <VideoContainer id="youtube-iframe-container">
-          {isIframeLoaded && (
-            <VideoFrame
-              src={fullEmbedUrl}
-              title="YouTube video player"
-              loading="lazy"
-              onLoad={handleLoad}
-              onError={handleError}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-          )}
+        <VideoContainer ref={videoRef}>
+          <VideoFrame
+            src={embedUrl}
+            title={`YouTube video player - ${videoId}`}
+            onError={handleError}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
         </VideoContainer>
         
-        {!isIframeLoaded && (
-          <ErrorContainer style={{ display: 'none' }}>
-            <div>
-              <ErrorText>
-                Не удалось загрузить видео. Смотрите на YouTube.
-              </ErrorText>
-              <ErrorLink
-                href={`https://www.youtube.com/watch?v=${videoId}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Watch on YouTube
-              </ErrorLink>
-            </div>
-          </ErrorContainer>
-        )}
+        <ErrorContainer style={{ display: 'none' }}>
+          <ErrorText>
+            Не удалось загрузить видео. Смотрите на YouTube.
+          </ErrorText>
+          <ErrorLink
+            href={`https://www.youtube.com/watch?v=${videoId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Смотреть на YouTube
+          </ErrorLink>
+        </ErrorContainer>
       </PlayerWrapper>
     </PlayerContainer>
   );
-};
+});
+
+// Кастомный хук для IntersectionObserver
+function useIntersectionObserver<T extends Element>(
+  callback: (isVisible: boolean) => void,
+  options = { threshold: 0.5 }
+) {
+  const ref = React.useRef<T>(null);
+
+  React.useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        callback(entry.isIntersecting);
+      },
+      options
+    );
+
+    const currentRef = ref.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, [callback, options]);
+
+  return ref;
+}
+
+YouTubeEmbed.displayName = 'YouTubeEmbed';
 
 export default YouTubeEmbed;

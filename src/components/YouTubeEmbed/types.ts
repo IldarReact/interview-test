@@ -1,24 +1,28 @@
-// Тип для конфигурации плеера YouTube
 export interface YouTubeEmbedConfig {
-    autoplay: string;
-    rel: string;
-    modestbranding: string;
-    iv_load_policy: string;
+    autoplay: string | '0' | '1';
+    rel: string | '0' | '1';
+    modestbranding: string | '0' | '1';
+    iv_load_policy: string | '1' | '3';
     origin: string;
 }
 
-// Тип для пропсов компонента YouTubeEmbed
-export interface YouTubePlayerProps {
-    videoId: string;
-    autoplay?: boolean;
-    showControls?: boolean;
-}
-
-// Конфигурация по умолчанию для плеера YouTube
+// Константы для улучшения типобезопасности
 export const DEFAULT_PLAYER_CONFIG: YouTubeEmbedConfig = {
     autoplay: '0',
     rel: '0',
     modestbranding: '1',
     iv_load_policy: '3',
     origin: typeof window !== 'undefined' ? window.location.origin : '',
-};
+} as const;
+
+// Дополнительные типы для строгой типизации
+export type YouTubePlayerMode = 'normal' | 'privacy';
+export type YouTubeQuality = 'default' | 'small' | 'medium' | 'large' | 'hd720' | 'hd1080';
+
+export interface YouTubePlayerProps {
+    videoId: string;
+    autoplay?: boolean;
+    showControls?: boolean;
+    mode?: YouTubePlayerMode;
+    quality?: YouTubeQuality;
+}
