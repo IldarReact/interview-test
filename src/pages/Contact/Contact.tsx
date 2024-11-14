@@ -1,7 +1,7 @@
-import { Container, Grid2, Typography } from '@mui/material';
+import React from 'react';
+import { Container, Grid, Typography } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { StyledForm, StyledInput, StyledButton } from './styles';
-import { useHistory } from 'react-router-dom';
+import { StyledForm, StyledInput, StyledButton } from './styles'; // Import styles from styles.ts
 
 interface FormValues {
   name: string;
@@ -11,7 +11,8 @@ interface FormValues {
 
 const Contact = () => {
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
-  const history = useHistory();
+  const [submitted, setSubmitted] = React.useState(false);  // Track form submission
+  const [name, setName] = React.useState('');  // Store the name for the thank you message
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     try {
@@ -22,31 +23,44 @@ const Contact = () => {
         },
         body: JSON.stringify(data),
       });
-      history.push(`/thank-you/${data.name}`);
+      setName(data.name);  // Set the name for the thank you message
+      setSubmitted(true);  // Mark the form as submitted
     } catch (error) {
       console.error('Error submitting form:', error);
       alert('There was an error submitting the form. Please try again later.');
     }
   };
 
+  if (submitted) {
+    return (
+      <Container maxWidth="lg" sx={{ flexGrow: 1, py: 8 }}>
+        <Grid container spacing={4} justifyContent="center" alignItems="center">
+          <Grid item xs={12} sm={10} md={8}>
+            <Typography variant="h2" gutterBottom>
+              Thank You, {name}!
+            </Typography>
+            <Typography variant="body1" paragraph>
+              We appreciate your interest in our services. We will be in touch with you soon.
+            </Typography>
+          </Grid>
+        </Grid>
+      </Container>
+    );
+  }
+
   return (
     <Container maxWidth="lg" sx={{ flexGrow: 1, py: 8 }}>
-      <Grid2 container spacing={4}>
-        <Grid2 container spacing={4}>
-          <Typography variant="h2" gutterBottom>
-            Contact Us
-          </Typography>
-          <Typography variant="body1" paragraph>
-            Fill out the form below to get in touch with us.
-          </Typography>
-        </Grid2>
-
-        <Grid2 container spacing={4}>
+      <Grid container spacing={4} justifyContent="center">
+        <Grid item xs={12} sm={10} md={8}>
           <StyledForm onSubmit={handleSubmit(onSubmit)}>
+            <Typography variant="h1" paragraph align="center">
+              Contact Us
+            </Typography>
             <StyledInput
               {...register('name', { required: 'Name is required' })}
               label="Name"
               variant="outlined"
+              fullWidth
               error={!!errors.name}
               helperText={errors.name?.message}
             />
@@ -60,6 +74,7 @@ const Contact = () => {
               })}
               label="Email"
               variant="outlined"
+              fullWidth
               error={!!errors.email}
               helperText={errors.email?.message}
             />
@@ -69,15 +84,16 @@ const Contact = () => {
               variant="outlined"
               multiline
               rows={4}
+              fullWidth
               error={!!errors.message}
               helperText={errors.message?.message}
             />
-            <StyledButton type="submit" variant="contained" color="primary">
+            <StyledButton type="submit" variant="contained" color="primary" fullWidth>
               Submit
             </StyledButton>
           </StyledForm>
-        </Grid2>
-      </Grid2>
+        </Grid>
+      </Grid>
     </Container>
   );
 };
