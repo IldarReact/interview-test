@@ -1,5 +1,7 @@
+// hooks/useYouTubeEmbed.tsx
+
 import { useState, useCallback, useMemo } from 'react';
-import { YouTubeEmbedConfig, DEFAULT_PLAYER_CONFIG } from '../components/YouTubeEmbed/types';
+import { YouTubeEmbedConfig, DEFAULT_PLAYER_CONFIG } from '../types';
 
 interface UseYouTubePlayerResult {
   hasError: boolean;
@@ -9,11 +11,10 @@ interface UseYouTubePlayerResult {
 }
 
 const createYouTubeUrl = (videoId: string, config: YouTubeEmbedConfig): string => {
-  // Proper type casting for URLSearchParams
   const params = new URLSearchParams(Object.entries(config)
     .reduce((acc, [key, value]) => ({
       ...acc,
-      [key]: String(value) // Explicit conversion of all values to string
+      [key]: String(value)
     }), {} as Record<string, string>));
     
   return `https://www.youtube-nocookie.com/embed/${videoId}?${params.toString()}`;
@@ -25,13 +26,11 @@ export const useYouTubePlayer = (
 ): UseYouTubePlayerResult => {
   const [hasError, setHasError] = useState(false);
 
-  // Memoize configuration
   const config = useMemo(
     () => ({ ...DEFAULT_PLAYER_CONFIG, ...customConfig }),
     [customConfig]
   );
 
-  // Memoize URL
   const embedUrl = useMemo(
     () => createYouTubeUrl(videoId, config),
     [videoId, config]

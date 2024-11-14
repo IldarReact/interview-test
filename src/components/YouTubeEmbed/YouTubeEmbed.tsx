@@ -1,3 +1,5 @@
+// YouTubeEmbed.tsx
+
 import React, { memo, useCallback, useMemo, useEffect, useRef, SyntheticEvent } from 'react';
 import { PlayerContainer, PlayerWrapper, VideoContainer, VideoFrame, ErrorContainer, ErrorText, ErrorLink } from './styles';
 
@@ -7,6 +9,7 @@ interface YouTubePlayerProps {
   showControls?: boolean;
 }
 
+// Функция для создания URL-адреса встраивания видео YouTube
 const createEmbedUrl = (videoId: string, autoplay: boolean, showControls: boolean): string => {
   const baseUrl = 'https://www.youtube-nocookie.com/embed/';
   const params = new URLSearchParams({
@@ -15,11 +18,12 @@ const createEmbedUrl = (videoId: string, autoplay: boolean, showControls: boolea
     rel: '0',
     modestbranding: '1',
     origin: window.location.origin,
-    loading: 'lazy',
+    loading: 'lazy', // Улучшение производительности за счет отложенной загрузки
   });
   return `${baseUrl}${videoId}?${params.toString()}`;
 };
 
+// Хук для отслеживания видимости элемента через IntersectionObserver
 function useIntersectionObserver<T extends Element>(
   callback: (isVisible: boolean) => void,
   options = { threshold: 0.5 }
@@ -60,12 +64,12 @@ const YouTubeEmbed: React.FC<YouTubePlayerProps> = memo(({
   );
 
   const handleError = useCallback((error: SyntheticEvent<HTMLIFrameElement>) => {
-    console.error('YouTube player error:', error);
+    console.error('Ошибка YouTube плеера:', error);
   }, []);
 
   const videoRef = useIntersectionObserver<HTMLDivElement>((isVisible) => {
     if (isVisible) {
-      console.log('Video container is visible');
+      console.log('Видео контейнер виден');
     }
   });
 
@@ -84,14 +88,14 @@ const YouTubeEmbed: React.FC<YouTubePlayerProps> = memo(({
         
         <ErrorContainer style={{ display: 'none' }}>
           <ErrorText>
-            Failed to load video. Watch on YouTube.
+            Видео не загрузилось. Смотреть на YouTube.
           </ErrorText>
           <ErrorLink
             href={`https://www.youtube.com/watch?v=${videoId}`}
             target="_blank"
             rel="noopener noreferrer"
           >
-            Watch on YouTube
+            Смотреть на YouTube
           </ErrorLink>
         </ErrorContainer>
       </PlayerWrapper>

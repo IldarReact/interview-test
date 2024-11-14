@@ -1,3 +1,5 @@
+// styles.ts
+
 import { styled } from '@mui/material/styles';
 
 export const PlayerContainer = styled('div')(({ theme }) => ({
@@ -5,7 +7,7 @@ export const PlayerContainer = styled('div')(({ theme }) => ({
   maxWidth: '1200px',
   margin: '0 auto',
   padding: theme.spacing(2),
-  [theme.breakpoints.down('sm')]: { // Mobile devices
+  [theme.breakpoints.down('sm')]: {
     padding: theme.spacing(1),
   }
 }));
@@ -16,14 +18,14 @@ export const PlayerWrapper = styled('div')(({ theme }) => ({
   overflow: 'hidden',
   boxShadow: theme.shadows[1],
   [theme.breakpoints.down('sm')]: {
-    borderRadius: 0, // Full width on mobile
+    borderRadius: 0,
     boxShadow: 'none',
   }
 }));
 
 export const VideoContainer = styled('div')({
   position: 'relative',
-  paddingBottom: '56.25%', // 16:9 aspect ratio
+  paddingBottom: '56.25%',
   height: 0,
   overflow: 'hidden',
 });
