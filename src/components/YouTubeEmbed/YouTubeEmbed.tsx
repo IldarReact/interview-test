@@ -17,23 +17,23 @@ const YouTubeEmbed: React.FC<YouTubePlayerProps> = ({
 }) => {
   const baseEmbedUrl = 'https://www.youtube.com/embed/';
   
-  // Properly format YouTube embed parameters
+  // Формируем параметры для встраивания YouTube
   const params = new URLSearchParams({
     autoplay: autoplay ? '1' : '0',
     controls: showControls ? '1' : '0',
-    rel: '0', // hide related videos
-    modestbranding: '1', // minimize YouTube branding
+    rel: '0', // скрыть связанные видео
+    modestbranding: '1', // минимизировать брендинг YouTube
     origin: window.location.origin,
   });
 
   const fullEmbedUrl = `${baseEmbedUrl}${videoId}?${params.toString()}`;
 
   const handleError = (error: React.SyntheticEvent<HTMLIFrameElement, Event>) => {
-    console.error('YouTube player error:', error);
+    console.error('Ошибка плеера YouTube:', error);
   };
 
   const handleLoad = () => {
-    console.log('YouTube player loaded successfully');
+    console.log('Плеер YouTube загружен успешно');
   };
 
   return (
@@ -54,14 +54,14 @@ const YouTubeEmbed: React.FC<YouTubePlayerProps> = ({
         <ErrorContainer style={{ display: 'none' }}>
           <div>
             <ErrorText>
-              Failed to load the video. Please watch directly on YouTube.
+              Не удалось загрузить видео. Смотрите на YouTube.
             </ErrorText>
             <ErrorLink
               href={`https://www.youtube.com/watch?v=${videoId}`}
               target="_blank"
               rel="noopener noreferrer"
             >
-              Watch on YouTube
+              Смотреть на YouTube
             </ErrorLink>
           </div>
         </ErrorContainer>

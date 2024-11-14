@@ -3,6 +3,8 @@ import { Container, Box, Stack, Typography, Button, useTheme, useMediaQuery } fr
 import { Link } from 'react-router-dom';
 import YouTubeEmbed from '../../components/YouTubeEmbed/YouTubeEmbed';
 import { StyledWrapper, StyledTitle, StyledSubtitle, StyledGrid, StyledGridItem } from './styles';
+import { DEFAULT_PLAYER_CONFIG } from '../../components/YouTubeEmbed/types';
+
 
 interface ContentItemProps {
   title: string;
@@ -104,7 +106,11 @@ const Home: React.FC = () => {
               maxWidth: { xs: '100%', md: '560px' }
             }}
           >
-            <YouTubeEmbed videoId="dQw4w9WgXcQ" autoplay={false} showControls={true} />
+            <YouTubeEmbed
+              videoId='dQw4w9WgXcQ'
+              autoplay={DEFAULT_PLAYER_CONFIG.autoplay === '1'}
+              showControls={DEFAULT_PLAYER_CONFIG.rel === '1'}
+            />
           </Box>
         </Stack>
 

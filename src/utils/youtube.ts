@@ -1,7 +1,15 @@
-export const DEFAULT_PLAYER_CONFIG: YouTubeEmbedConfig = {
-    autoplay: '0',
-    rel: '0',
-    modestbranding: '1',
-    iv_load_policy: '3',
-    origin: typeof window !== 'undefined' ? window.location.origin : '',
+import { DEFAULT_PLAYER_CONFIG } from '../components/YouTubeEmbed/types';
+
+// Использование конфигурации плеера YouTube
+export const getYouTubeEmbedUrl = (videoId: string, config = DEFAULT_PLAYER_CONFIG) => {
+  const baseEmbedUrl = 'https://www.youtube.com/embed/';
+  const params = new URLSearchParams({
+    autoplay: config.autoplay,
+    controls: config.rel,
+    rel: config.modestbranding,
+    modestbranding: config.iv_load_policy,
+    origin: config.origin,
+  });
+
+  return `${baseEmbedUrl}${videoId}?${params.toString()}`;
 };
