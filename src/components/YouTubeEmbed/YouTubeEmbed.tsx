@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { YouTubePlayerProps } from './types';
 import {
   PlayerContainer,
@@ -15,6 +15,8 @@ const YouTubeEmbed: React.FC<YouTubePlayerProps> = ({
   autoplay = false,
   showControls = true,
 }) => {
+  const [isIframeLoaded, setIframeLoaded] = useState(false);
+
   const baseEmbedUrl = 'https://www.youtube.com/embed/';
   
   // Формируем параметры для встраивания YouTube
@@ -33,38 +35,62 @@ const YouTubeEmbed: React.FC<YouTubePlayerProps> = ({
   };
 
   const handleLoad = () => {
+    setIframeLoaded(true);
     console.log('Плеер YouTube загружен успешно');
   };
+
+  useEffect(() => {
+    // Запуск только когда компонент в зоне видимости
+    const handleIntersection = (entries: IntersectionObserverEntry[]) => {
+      const entry = entries[0];
+      if (entry.isIntersecting) {
+        setIframeLoaded(true); // Загружаем iframe, когда элемент виден
+      }
+    };
+
+    const observer = new IntersectionObserver(handleIntersection, { threshold: 0.5 });
+    const iframeContainer = document.getElementById('youtube-iframe-container');
+
+    if (iframeContainer) {
+      observer.observe(iframeContainer);
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <PlayerContainer>
       <PlayerWrapper>
-        <VideoContainer>
-          <VideoFrame
-            src={fullEmbedUrl}
-            title="YouTube video player"
-            loading="lazy"
-            onLoad={handleLoad}
-            onError={handleError}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
+        <VideoContainer id="youtube-iframe-container">
+          {isIframeLoaded && (
+            <VideoFrame
+              src={fullEmbedUrl}
+              title="YouTube video player"
+              loading="lazy"
+              onLoad={handleLoad}
+              onError={handleError}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          )}
         </VideoContainer>
         
-        <ErrorContainer style={{ display: 'none' }}>
-          <div>
-            <ErrorText>
-              Не удалось загрузить видео. Смотрите на YouTube.
-            </ErrorText>
-            <ErrorLink
-              href={`https://www.youtube.com/watch?v=${videoId}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Смотреть на YouTube
-            </ErrorLink>
-          </div>
-        </ErrorContainer>
+        {!isIframeLoaded && (
+          <ErrorContainer style={{ display: 'none' }}>
+            <div>
+              <ErrorText>
+                Не удалось загрузить видео. Смотрите на YouTube.
+              </ErrorText>
+              <ErrorLink
+                href={`https://www.youtube.com/watch?v=${videoId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Смотреть на YouTube
+              </ErrorLink>
+            </div>
+          </ErrorContainer>
+        )}
       </PlayerWrapper>
     </PlayerContainer>
   );

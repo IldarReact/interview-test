@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { YouTubeEmbedConfig, DEFAULT_PLAYER_CONFIG } from '../components/YouTubeEmbed/types';
 
 // Типизация возвращаемого значения
@@ -13,10 +13,13 @@ export const useYouTubePlayer = (videoId: string, customConfig?: YouTubeEmbedCon
   const [hasError, setHasError] = useState(false);
 
   // Использование пользовательской конфигурации, если она есть, или конфигурации по умолчанию
-  const config = { ...DEFAULT_PLAYER_CONFIG, ...customConfig };
+  const config = useMemo(() => ({ ...DEFAULT_PLAYER_CONFIG, ...customConfig }), [customConfig]);
 
   // Создание URL для встраивания YouTube с параметрами
-  const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?${new URLSearchParams(config as Record<string, string>).toString()}`;
+  const embedUrl = useMemo(() => 
+    `https://www.youtube-nocookie.com/embed/${videoId}?${new URLSearchParams(config as Record<string, string>).toString()}`,
+    [videoId, config]
+  );
 
   // Обработчик ошибок iframe
   const handleIframeError = useCallback(
