@@ -1,4 +1,4 @@
-import { Grid } from '@mui/material';
+import { Grid, GridProps } from '@mui/material';
 import { styled } from '@mui/material';
 
 export const StyledGrid = styled(Grid)(({ theme }) => ({
