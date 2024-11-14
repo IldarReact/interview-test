@@ -1,59 +1,37 @@
-// hooks/useYouTubeEmbed.tsx
+// hooks/useIntersectionObserver.tsx
+import { useEffect, useRef } from 'react';
 
-import { useState, useCallback, useMemo } from 'react';
-import { YouTubeEmbedConfig, DEFAULT_PLAYER_CONFIG } from '../types';
-
-interface UseYouTubePlayerResult {
-  hasError: boolean;
-  embedUrl: string;
-  handleIframeError: (event: React.SyntheticEvent<HTMLIFrameElement, Event>) => void;
-  handleIframeLoad: () => void;
-}
-
-const createYouTubeUrl = (videoId: string, config: YouTubeEmbedConfig): string => {
-  const params = new URLSearchParams(Object.entries(config)
-    .reduce((acc, [key, value]) => ({
-      ...acc,
-      [key]: String(value)
-    }), {} as Record<string, string>));
-    
-  return `https://www.youtube-nocookie.com/embed/${videoId}?${params.toString()}`;
+type UseIntersectionObserverOptions = {
+  threshold?: number;
 };
 
-export const useYouTubePlayer = (
-  videoId: string, 
-  customConfig?: Partial<YouTubeEmbedConfig>
-): UseYouTubePlayerResult => {
-  const [hasError, setHasError] = useState(false);
+const useIntersectionObserver = <T extends Element>(
+  callback: (isVisible: boolean) => void,
+  options: UseIntersectionObserverOptions = { threshold: 0.5 }
+) => {
+  const ref = useRef<T>(null);
 
-  const config = useMemo(
-    () => ({ ...DEFAULT_PLAYER_CONFIG, ...customConfig }),
-    [customConfig]
-  );
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        callback(entry.isIntersecting);
+      },
+      options
+    );
 
-  const embedUrl = useMemo(
-    () => createYouTubeUrl(videoId, config),
-    [videoId, config]
-  );
+    const currentRef = ref.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
 
-  const handleIframeError = useCallback(
-    (event: React.SyntheticEvent<HTMLIFrameElement, Event>) => {
-      const iframe = event.target as HTMLIFrameElement;
-      if (iframe.contentWindow?.document?.body?.textContent?.includes('Access to resources at origin')) {
-        setHasError(true);
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
       }
-    },
-    []
-  );
+    };
+  }, [callback, options]);
 
-  const handleIframeLoad = useCallback(() => {
-    setHasError(false);
-  }, []);
-
-  return {
-    hasError,
-    embedUrl,
-    handleIframeError,
-    handleIframeLoad,
-  };
+  return ref;
 };
+
+export default useIntersectionObserver;
